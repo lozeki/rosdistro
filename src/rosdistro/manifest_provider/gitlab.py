@@ -76,11 +76,9 @@ def _gitlab_paged_api_query(path, resource, attrs):
 
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):
-    assert repo.version
-    logger.debug('repo.version "%s"' % repo.version)
+    assert repo.version    
     server, path = repo.get_url_parts()
-    logger.debug('server "%s"' % server)
-    logger.debug('path "%s"' % path)
+    logger.debug('repo.version:%s server: %s path %s' % repo.version, % server, % path)
     if not server.endswith('gitlab.halo.dekaresearch.com'):
         logger.debug('Skip non-gitlab url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab urls')
