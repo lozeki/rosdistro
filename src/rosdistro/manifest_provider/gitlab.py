@@ -56,7 +56,7 @@ def _gitlab_paged_api_query(path, resource, attrs):
     _attrs.pop('pagination', None)
     _attrs.pop('page', None)
 
-    url = 'https://gitlab.com/api/v4/projects/%s/%s?pagination=keyset' % (urlquote(path, safe=''), resource)
+    url = 'https://gitlab.halo.dekaresearch.com/api/v4/projects/%s/%s?pagination=keyset' % (urlquote(path, safe=''), resource)
     for k, v in _attrs.items():
         url += '&%s=%s' % (k, urlquote(str(v), safe=''))
 
@@ -79,7 +79,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     assert repo.version
     logger.debug('repo.version "%s"' % repo.version)
     server, path = repo.get_url_parts()
-    if not server.endswith('gitlab.com'):
+    if not server.endswith('gitlab.halo.dekaresearch.com'):
         logger.debug('Skip non-gitlab url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab urls')
 
@@ -88,7 +88,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     if not repo.has_remote_tag(release_tag):
         raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)
 
-    url = 'https://gitlab.com/%s/-/raw/%s/package.xml' % (path, release_tag)
+    url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
         return urlopen(url).read().decode('utf-8')
@@ -100,7 +100,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
 def gitlab_source_manifest_provider(repo):
     assert repo.version
     server, path = repo.get_url_parts()
-    if not server.endswith('gitlab.com'):
+    if not server.endswith('gitlab.halo.dekaresearch.com'):
         logger.debug('Skip non-gitlab url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab urls')
 
@@ -128,7 +128,7 @@ def gitlab_source_manifest_provider(repo):
 
     cache = SourceRepositoryCache.from_ref(sha)
     for package_xml_path in package_xml_paths:
-        url = 'https://gitlab.com/%s/-/raw/%s/%s' % \
+        url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/%s' % \
             (path, sha, package_xml_path + '/package.xml' if package_xml_path else 'package.xml')
         logger.debug('- load package.xml from %s' % url)
         package_xml = urlopen(url).read().decode('utf-8')
