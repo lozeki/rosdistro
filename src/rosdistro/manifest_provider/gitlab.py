@@ -91,15 +91,15 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
         logger.debug('Skip non-gitlab.halo.dekaresearch url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab.halo.dekaresearch urls')
 
-    release_tag = repo.get_release_tag(pkg_name)
-    logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag}')
+    release_tag = repo.get_release_tag(pkg_name)    
     if not repo.has_remote_tag(release_tag):
         raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)
     project_name = path[path.rfind('/') + 1:]
-    project_id = find_project_id(project_name)
+    project_id = find_project_id(project_name)    
     #url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
     url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)
     #url="http://gitlab.halo.dekaresearch.com/api/v4/projects/1415/repository/files/package.xml/raw?ref=release/noetic/catkin/0.8.10-1"
+    logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag}/n project_name: {project_name} project_id: {project_id} /n url: {url}')
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
         return urlopen(url).read().decode('utf-8')
