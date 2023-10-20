@@ -74,21 +74,33 @@ def _gitlab_paged_api_query(path, resource, attrs):
                 break
             url = match.group(1)
 
+def find_project_id(project_name):
+    gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token='glpat-m9JYwdVKakUnaxw2n3hE')
+    # loop through all packages to find the package id
+    for package in gl.projects.list(iterator=True):
+        if package.name == project_name:    #package.attributes['name']
+            print(package.id)
+            return package.id
+    logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
+        raise RuntimeError('can not find the project in gitlab.halo.dekaresearch.com')
+    return null
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     assert repo.version    
-    server, path = repo.get_url_parts()
-    logger.debug(f'repo.version:{repo.version} server: {server} path {path}')
+    server, path = repo.get_url_parts()    
     if not server.endswith('gitlab.halo.dekaresearch.com'):
-        logger.debug('Skip non-gitlab url "%s"' % repo.url)
-        raise RuntimeError('can not handle non gitlab urls')
+        logger.debug('Skip non-gitlab.halo.dekaresearch url "%s"' % repo.url)
+        raise RuntimeError('can not handle non gitlab.halo.dekaresearch urls')
 
     release_tag = repo.get_release_tag(pkg_name)
-
+    logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag}')
     if not repo.has_remote_tag(release_tag):
         raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)
-
-    url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
+    project_name = path[path.rfind('/') + 1:]
+    project_id = find_project_id(project_name)
+    #url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
+    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)
+    #url="http://gitlab.halo.dekaresearch.com/api/v4/projects/1415/repository/files/package.xml/raw?ref=release/noetic/catkin/0.8.10-1"
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
         return urlopen(url).read().decode('utf-8')
