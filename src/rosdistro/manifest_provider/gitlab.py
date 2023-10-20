@@ -82,7 +82,6 @@ def find_project_id(project_name):
             print(package.id)
             return package.id
     logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
-        raise RuntimeError('can not find the project in gitlab.halo.dekaresearch.com')
     return null
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):
