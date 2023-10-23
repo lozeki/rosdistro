@@ -50,13 +50,13 @@ from rosdistro.source_repository_cache import SourceRepositoryCache
 from rosdistro import logger
 
 
-def _gitlab_paged_api_query(path, resource, attrs):
+def _gitlab_paged_api_query(project_id, resource, attrs):
     _attrs = {'per_page': 50}
     _attrs.update(attrs)
     _attrs.pop('pagination', None)
     _attrs.pop('page', None)
 
-    url = 'https://gitlab.halo.dekaresearch.com/api/v4/projects/%s/%s?pagination=keyset' % (urlquote(path, safe=''), resource)
+    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/%s?pagination=keyset' % (project_id, resource)
     for k, v in _attrs.items():
         url += '&%s=%s' % (k, urlquote(str(v), safe=''))
 
@@ -74,12 +74,12 @@ def _gitlab_paged_api_query(path, resource, attrs):
                 break
             url = match.group(1)
 
-def find_project_id(project_name):
+def find_project_id(path):
+    project_name = path[path.rfind('/') + 1:]
     gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token='glpat-m9JYwdVKakUnaxw2n3hE')
     # loop through all packages to find the package id
     for package in gl.projects.list(iterator=True):
-        if package.name == project_name:    #package.attributes['name']
-            print(package.id)
+        if package.name == project_name:
             return package.id
     logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
     return null
@@ -90,12 +90,10 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     if not server.endswith('gitlab.halo.dekaresearch.com'):
         logger.debug('Skip non-gitlab.halo.dekaresearch url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab.halo.dekaresearch urls')
-    raise RuntimeError('repo.version: "%s"' % repo.version)
     release_tag = repo.get_release_tag(pkg_name)    
     if not repo.has_remote_tag(release_tag):
         raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)
-    project_name = path[path.rfind('/') + 1:]
-    project_id = find_project_id(project_name)    
+    project_id = find_project_id(path)    
     #url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
     url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
     logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_name: {project_name} project_id: {project_id} url: {url}')
@@ -106,7 +104,6 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
         logger.debug('- failed (%s), trying "%s"' % (e, url))
         raise RuntimeError()
 
-
 def gitlab_source_manifest_provider(repo):
     assert repo.version
     server, path = repo.get_url_parts()
@@ -114,12 +111,13 @@ def gitlab_source_manifest_provider(repo):
         logger.debug('Skip non-gitlab url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab urls')
 
+    project_id = find_project_id(path)
     # Resolve the version ref to a sha
-    sha = next(_gitlab_paged_api_query(path, 'repository/commits', {'per_page': 1, 'ref_name': repo.version}))['id']
+    sha = next(_gitlab_paged_api_query(project_id, 'repository/commits', {'per_page': 1, 'ref_name': repo.version}))['id']
 
     # Look for package.xml files in the tree
     package_xml_paths = set()
-    for obj in _gitlab_paged_api_query(path, 'repository/tree', {'recursive': 'true', 'ref': sha}):
+    for obj in _gitlab_paged_api_query(project_id, 'repository/tree', {'recursive': 'true', 'ref': sha}):
         if obj['path'].split('/')[-1] == 'package.xml':
             package_xml_paths.add(os.path.dirname(obj['path']))
 
