@@ -68,7 +68,10 @@ class RepositorySpecification(object):
     @property
     def remote_refs(self):
         if not self._remote_refs:
-            result = Git().command('ls-remote', self.url)
+            if ('gitlab.halo.dekaresearch.com' in self.url):
+                result = Git().command('ls-remote','--heads', self.url.replace("http://", "http://oauth2:glpat-zkhuGoFNYcrjuvkwkSco@"))
+            else:
+                result = Git().command('ls-remote', self.url)
             if result['returncode'] != 0:
                 raise RuntimeError('Could not git ls-remote repository "%s"' % self.url)
             self._remote_refs = {}
