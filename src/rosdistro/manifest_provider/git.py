@@ -88,7 +88,8 @@ def _temp_git_clone(url, ref):
     base = tempfile.mkdtemp('rosdistro')
     git = Git(cwd=base)
     if ('gitlab.halo.dekaresearch.com' in url):
-        url = url.replace("http://", "http://build-farmer:glpat-zkhuGoFNYcrjuvkwkSco@")
+        GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
+        url = url.replace("http://", "http://build-farmer:"+GITLAB_TOKEN+"@")
     try:
         if git.version_gte('1.8.0') and not ref_is_hash(ref):
             # Directly clone the required ref with least amount of additional history.
