@@ -34,9 +34,9 @@ kwargs = {
     'url': 'http://wiki.ros.org/rosdistro',
     'project_urls': {
         'Source code':
-        'https://github.com/ros-infrastructure/rosdistro',
+        'https://github.com/lozeki/rosdistro',
         'Issue tracker':
-        'https://github.com/ros-infrastructure/rosdistro/issues',
+        'https://github.com/lozeki/rosdistro/issues',
     },
     'keywords': ['ROS'],
     'classifiers': [
