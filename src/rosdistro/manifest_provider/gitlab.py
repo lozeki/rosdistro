@@ -75,8 +75,9 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
             url = match.group(1)
 
 def find_project_id(path):
+    GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
     project_name = path[path.rfind('/') + 1:]
-    gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token='glpat-m9JYwdVKakUnaxw2n3hE')
+    gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token=GITLAB_TOKEN)
     # loop through all packages to find the package id
     for package in gl.projects.list(iterator=True):
         if package.name == project_name:
