@@ -32,7 +32,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import re
-
+import os
 from .vcs import Git
 
 
@@ -69,7 +69,8 @@ class RepositorySpecification(object):
     def remote_refs(self):
         if not self._remote_refs:
             if ('gitlab.halo.dekaresearch.com' in self.url):
-                result = Git().command('ls-remote', '--tags', '--heads', self.url.replace("http://", "http://oauth2:glpat-zkhuGoFNYcrjuvkwkSco@"))
+                GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
+                result = Git().command('ls-remote', '--tags', '--heads', self.url.replace("http://", "http://oauth2:"+GITLAB_TOKEN+"@"))
             else:
                 result = Git().command('ls-remote', self.url)
             if result['returncode'] != 0:
