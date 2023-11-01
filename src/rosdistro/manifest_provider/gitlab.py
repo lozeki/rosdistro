@@ -98,13 +98,18 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     project_id = find_project_id(path)    
     #url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
     url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
-    logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_name: {project_name} project_id: {project_id} url: {url}')
+    logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
         return urlopen(url).read().decode('utf-8')
     except URLError as e:
         logger.debug('- failed (%s), trying "%s"' % (e, url))
-        raise RuntimeError('Gitlab manifest error: %s' % url)
+        raise RuntimeError()
+    # ONLY FOR DEBUG
+    if str(project_id) =='1414':
+        logger.debug('gitlab.halo.dekaresearch url "%s"' % url)
+        raise RuntimeError('DEBUG CATKIN URL: %s' % url)
+    # ONLY FOR DEBUG
 
 def gitlab_source_manifest_provider(repo):
     assert repo.version
