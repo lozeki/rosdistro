@@ -104,7 +104,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
         return urlopen(url).read().decode('utf-8')
     except URLError as e:
         logger.debug('- failed (%s), trying "%s"' % (e, url))
-        raise RuntimeError()
+        raise RuntimeError('Gitlab manifest error: %s' % url)
 
 def gitlab_source_manifest_provider(repo):
     assert repo.version
