@@ -106,7 +106,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
         logger.debug('- failed (%s), trying "%s"' % (e, url))
         raise RuntimeError()
     # ONLY FOR DEBUG
-    if str(project_id) =='1414':
+    if not server.endswith('gitlab.com'):
         logger.debug('gitlab.halo.dekaresearch url "%s"' % url)
         raise RuntimeError('DEBUG CATKIN URL: %s' % url)
     # ONLY FOR DEBUG
