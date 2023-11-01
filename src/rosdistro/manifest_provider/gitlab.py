@@ -43,6 +43,7 @@ except ImportError:
 import json
 import os
 import re
+import gitlab
 
 from catkin_pkg.package import parse_package_string
 
