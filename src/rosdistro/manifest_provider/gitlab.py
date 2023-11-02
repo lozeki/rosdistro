@@ -87,22 +87,37 @@ def find_project_id(path):
     return null
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):
+        # ONLY FOR DEBUG
+    if not server.endswith('hahahah'):
+        raise RuntimeError('DEBUG CATKIN URL 0: %s' % url)
+    # ONLY FOR DEBUG
     assert repo.version    
-    server, path = repo.get_url_parts()    
+    server, path = repo.get_url_parts()
+        # ONLY FOR DEBUG
+    if not server.endswith('hahahah'):
+        raise RuntimeError('DEBUG CATKIN URL 1: %s' % url)
+    # ONLY FOR DEBUG
     if not server.endswith('gitlab.halo.dekaresearch.com'):
         logger.debug('Skip non-gitlab.halo.dekaresearch url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab.halo.dekaresearch urls')
-    release_tag = repo.get_release_tag(pkg_name)    
+    release_tag = repo.get_release_tag(pkg_name)   
+        # ONLY FOR DEBUG
+    if not server.endswith('hahahah'):
+        raise RuntimeError('DEBUG CATKIN URL 2: %s' % url)
+    # ONLY FOR DEBUG
     if not repo.has_remote_tag(release_tag):
         raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)
     project_id = find_project_id(path)    
+        # ONLY FOR DEBUG
+    if not server.endswith('hahahah'):
+        raise RuntimeError('DEBUG CATKIN URL 3: %s' % url)
+    # ONLY FOR DEBUG
     #url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
     url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
     logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     # ONLY FOR DEBUG
-    if not server.endswith('gitlab.com'):
-        logger.debug('gitlab.halo.dekaresearch url "%s"' % url)
-        raise RuntimeError('DEBUG CATKIN URL: %s' % url)
+    if not server.endswith('hahahah'):
+        raise RuntimeError('DEBUG CATKIN URL 4: %s' % url)
     # ONLY FOR DEBUG
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
