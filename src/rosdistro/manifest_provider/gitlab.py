@@ -86,11 +86,7 @@ def find_project_id(path):
     logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
     return null
 
-def gitlab_manifest_provider(_dist_name, repo, pkg_name):
-        # ONLY FOR DEBUG
-    if not server.endswith('hahahah'):
-        raise RuntimeError('DEBUG CATKIN URL 0: %s' % url)
-    # ONLY FOR DEBUG
+def gitlab_manifest_provider(_dist_name, repo, pkg_name):      
     assert repo.version    
     server, path = repo.get_url_parts()
         # ONLY FOR DEBUG
