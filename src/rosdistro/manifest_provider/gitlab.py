@@ -92,11 +92,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     if not server.endswith('gitlab.halo.dekaresearch.com'):
         logger.debug('Skip non-gitlab.halo.dekaresearch url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab.halo.dekaresearch urls')
-    release_tag = repo.get_release_tag(pkg_name)   
-        # ONLY FOR DEBUG
-    if not server.endswith('hahahah'):
-        raise RuntimeError('DEBUG CATKIN release_tag 2: %s' % release_tag)
-    # ONLY FOR DEBUG
+    release_tag = repo.get_release_tag(pkg_name) 
     if not repo.has_remote_tag(release_tag):
         raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)
     project_id = find_project_id(path)    
