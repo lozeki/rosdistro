@@ -95,6 +95,10 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     release_tag = repo.get_release_tag(pkg_name) 
     if not repo.has_remote_tag(release_tag):
         raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)
+    # ONLY FOR DEBUG
+    if not server.endswith('hahahah'):
+        raise RuntimeError('DEBUG CATKIN server %s path %s 3' (server, path))
+    # ONLY FOR DEBUG
     project_id = find_project_id(path)    
         # ONLY FOR DEBUG
     if not server.endswith('hahahah'):
