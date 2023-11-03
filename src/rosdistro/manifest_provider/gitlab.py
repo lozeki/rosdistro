@@ -78,7 +78,6 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
 def find_project_id(path):
     load_dotenv()
     GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
-    logger.debug(f'TOKEN TOKEN TOKEN:{GITLAB_TOKEN}')
     project_name = path[path.rfind('/') + 1:]
     gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token=GITLAB_TOKEN)
     # loop through all packages to find the package id
@@ -99,7 +98,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     #    raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)    
     project_id = find_project_id(path)
     url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
-    logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
+    logger.debug(f'log: repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
         return urlopen(url).read().decode('utf-8')
