@@ -84,8 +84,7 @@ def find_project_id(path):
     for package in gl.projects.list(iterator=True):
         if package.name == project_name:
             return package.id
-    #logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
-    logger.debug(f'can not find the project {project_name} in gitlab.halo.dekaresearch.com, TOKEN: {GITLAB_TOKEN}')
+    logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
     return null
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):      
@@ -97,12 +96,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     release_tag = repo.get_release_tag(pkg_name) 
     #if not repo.has_remote_tag(release_tag):
     #    raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)    
-    project_id = find_project_id(path)    
-    # ONLY FOR DEBUG
-    if not server.endswith('hahahhahahaha'):
-        raise RuntimeError(f'DEBUG DEBUG project_id:{project_id}')
-    # ONLY FOR DEBUG
-    #url = 'https://gitlab.halo.dekaresearch.com/%s/-/raw/%s/package.xml' % (path, release_tag)
+    project_id = find_project_id(path)
     url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
     logger.debug(f'repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     # ONLY FOR DEBUG
