@@ -50,7 +50,8 @@ from catkin_pkg.package import parse_package_string
 
 from rosdistro.source_repository_cache import SourceRepositoryCache
 from rosdistro import logger
-
+load_dotenv()
+GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
 def _gitlab_paged_api_query(project_id, resource, attrs):
     _attrs = {'per_page': 50}
     _attrs.update(attrs)
@@ -76,8 +77,6 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
             url = match.group(1)
 
 def find_project_id(path):
-    load_dotenv()
-    GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
     project_name = path[path.rfind('/') + 1:]
     gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token=GITLAB_TOKEN)
     # loop through all packages to find the package id
@@ -97,11 +96,12 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     #if not repo.has_remote_tag(release_tag):
     #    raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)    
     project_id = find_project_id(path)
-    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
+    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)
+    headers = {"PRIVATE-TOKEN": GITLAB_TOKEN}
     logger.debug(f'log: repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
-        return urlopen(url).read().decode('utf-8')
+        return urlopen(Request(url, headers=headers)).read().decode('utf-8')
     except URLError as e:
         logger.debug('- failed (%s), trying "%s"' % (e, url))
         raise RuntimeError()
