@@ -45,7 +45,8 @@ import os
 import re
 import gitlab
 from dotenv import load_dotenv
-
+load_dotenv()
+GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
 from catkin_pkg.package import parse_package_string
 
 from rosdistro.source_repository_cache import SourceRepositoryCache
@@ -75,9 +76,7 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
                 break
             url = match.group(1)
 
-def find_project_id(path):
-    load_dotenv()
-    GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
+def find_project_id(path):    
     project_name = path[path.rfind('/') + 1:]
     gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token=GITLAB_TOKEN)
     logger.debug(f'GITLAB_TOKEN : {GITLAB_TOKEN}')
@@ -90,8 +89,6 @@ def find_project_id(path):
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     assert repo.version
-    load_dotenv()
-    GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
     server, path = repo.get_url_parts()
     if not server.endswith('gitlab.halo.dekaresearch.com'):
         logger.debug('Skip non-gitlab.halo.dekaresearch url "%s"' % repo.url)
