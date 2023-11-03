@@ -83,7 +83,8 @@ def find_project_id(path):
     for package in gl.projects.list(iterator=True):
         if package.name == project_name:
             return package.id
-    logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
+    #logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
+    logger.debug(f'can not find the project {project_name} in gitlab.halo.dekaresearch.com, TOKEN: {GITLAB_TOKEN}')
     return null
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):      
