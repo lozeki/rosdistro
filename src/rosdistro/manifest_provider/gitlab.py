@@ -49,7 +49,8 @@ from catkin_pkg.package import parse_package_string
 
 from rosdistro.source_repository_cache import SourceRepositoryCache
 from rosdistro import logger
-
+GITHUB_USER = os.getenv('GITHUB_USER', None)
+GITHUB_PASSWORD = os.getenv('GITHUB_PASSWORD', None)
 
 def _gitlab_paged_api_query(project_id, resource, attrs):
     _attrs = {'per_page': 50}
@@ -84,7 +85,7 @@ def find_project_id(path):
         if package.name == project_name:
             return package.id
     #logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
-    logger.debug(f'can not find the project {project_name} in gitlab.halo.dekaresearch.com, TOKEN: {GITLAB_TOKEN}')
+    logger.debug(f'{GITHUB_USER} and {GITHUB_PASSWORD} can not find the project {project_name} in gitlab.halo.dekaresearch.com, TOKEN: {GITLAB_TOKEN}')
     return null
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):      
