@@ -45,12 +45,13 @@ import os
 import re
 import gitlab
 from dotenv import load_dotenv
-load_dotenv()
-GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
 from catkin_pkg.package import parse_package_string
 
 from rosdistro.source_repository_cache import SourceRepositoryCache
 from rosdistro import logger
+load_dotenv()
+GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
+headers = {"PRIVATE-TOKEN": GITLAB_TOKEN}
 
 def _gitlab_paged_api_query(project_id, resource, attrs):
     _attrs = {'per_page': 50}
@@ -63,7 +64,7 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
         url += '&%s=%s' % (k, urlquote(str(v), safe=''))
 
     while True:
-        with urlopen(url) as res:
+        with urlopen(Request(url, headers=headers)) as res:
             for result in json.loads(res.read().decode('utf-8')):
                 yield result
 
@@ -78,7 +79,7 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
 
 def find_project_id(path):    
     project_name = path[path.rfind('/') + 1:]
-    gl = gitlab.Gitlab('http://gitlab.halo.dekaresearch.com', private_token=GITLAB_TOKEN)
+    gl = gitlab.Gitlab('https://gitlab-prod.halo.halo-deka.com', private_token=GITLAB_TOKEN)
     logger.debug(f'GITLAB_TOKEN : {GITLAB_TOKEN}')
     # loop through all packages to find the package id
     for package in gl.projects.list(iterator=True):
@@ -97,8 +98,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     #if not repo.has_remote_tag(release_tag):
     #    raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)    
     project_id = find_project_id(path)
-    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)
-    headers = {"PRIVATE-TOKEN": GITLAB_TOKEN}
+    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
     logger.debug(f'log: repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
@@ -139,10 +139,10 @@ def gitlab_source_manifest_provider(repo):
 
     cache = SourceRepositoryCache.from_ref(sha)
     for package_xml_path in package_xml_paths:
-        url = 'http://gitlab.halo.dekaresearch.com/%s/-/raw/%s/%s' % \
+        url = 'https://gitlab-prod.halo.halo-deka.com/%s/-/raw/%s/%s' % \
             (path, sha, package_xml_path + '/package.xml' if package_xml_path else 'package.xml')
         logger.debug('- load package.xml from %s' % url)
-        package_xml = urlopen(url).read().decode('utf-8')
+        package_xml = urlopen(Request(url, headers=headers)).read().decode('utf-8')
         name = parse_package_string(package_xml).name
         cache.add(name, package_xml_path, package_xml)
 
