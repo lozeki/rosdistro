@@ -59,7 +59,7 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
     _attrs.pop('pagination', None)
     _attrs.pop('page', None)
 
-    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/%s?pagination=keyset' % (project_id, resource)
+    url = 'http://gitlab-prod.halo.halo-deka.com/api/v4/projects/%s/%s?pagination=keyset' % (project_id, resource)
     for k, v in _attrs.items():
         url += '&%s=%s' % (k, urlquote(str(v), safe=''))
 
@@ -85,20 +85,20 @@ def find_project_id(path):
     for package in gl.projects.list(iterator=True):
         if package.name == project_name:
             return package.id
-    logger.debug('can not find the project "%s" in gitlab.halo.dekaresearch.com' % project_name)
+    logger.debug('can not find the project "%s" in gitlab-prod.halo.halo-deka.com' % project_name)
     return null
 
 def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     assert repo.version
     server, path = repo.get_url_parts()
-    if not server.endswith('gitlab.halo.dekaresearch.com'):
-        logger.debug('Skip non-gitlab.halo.dekaresearch url "%s"' % repo.url)
-        raise RuntimeError('can not handle non gitlab.halo.dekaresearch urls')
+    if not server.endswith('gitlab-prod.halo.halo-deka.com'):
+        logger.debug('Skip gitlab-prod.halo.halo-deka.com url "%s"' % repo.url)
+        raise RuntimeError('can not handle non gitlab-prod.halo.halo-deka.com urls')
     release_tag = repo.get_release_tag(pkg_name) 
     #if not repo.has_remote_tag(release_tag):
     #    raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)    
     project_id = find_project_id(path)
-    url = 'http://gitlab.halo.dekaresearch.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
+    url = 'http://gitlab-prod.halo.halo-deka.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
     logger.debug(f'log: repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
@@ -110,7 +110,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
 def gitlab_source_manifest_provider(repo):
     assert repo.version
     server, path = repo.get_url_parts()
-    if not server.endswith('gitlab.halo.dekaresearch.com'):
+    if not server.endswith('gitlab-prod.halo.halo-deka.com'):
         logger.debug('Skip non-gitlab url "%s"' % repo.url)
         raise RuntimeError('can not handle non gitlab urls')
 
