@@ -59,7 +59,7 @@ def _gitlab_paged_api_query(project_id, resource, attrs):
     _attrs.pop('pagination', None)
     _attrs.pop('page', None)
 
-    url = 'http://gitlab-prod.halo.halo-deka.com/api/v4/projects/%s/%s?pagination=keyset' % (project_id, resource)
+    url = 'https://gitlab-prod.halo.halo-deka.com/api/v4/projects/%s/%s?pagination=keyset' % (project_id, resource)
     for k, v in _attrs.items():
         url += '&%s=%s' % (k, urlquote(str(v), safe=''))
 
@@ -98,7 +98,7 @@ def gitlab_manifest_provider(_dist_name, repo, pkg_name):
     #if not repo.has_remote_tag(release_tag):
     #    raise RuntimeError('specified tag "%s" is not a git tag' % release_tag)    
     project_id = find_project_id(path)
-    url = 'http://gitlab-prod.halo.halo-deka.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
+    url = 'https://gitlab-prod.halo.halo-deka.com/api/v4/projects/%s/repository/files/package.xml/raw?ref=%s' % (project_id, release_tag)    
     logger.debug(f'log: repo.version:{repo.version} server: {server} path: {path} release_tag: {release_tag} project_id: {project_id} url: {url}')
     try:
         logger.debug('Load package.xml file from url "%s"' % url)
