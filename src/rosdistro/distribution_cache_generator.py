@@ -98,7 +98,7 @@ def generate_distribution_cache(index, dist_name, preclean=False, ignore_local=F
             old_package_xml = cache.release_package_xmls[pkg_name]
         package_xml = dist.get_release_package_xml(pkg_name)
         if not package_xml:
-            errors.append('%s: missing package.xml file for package "%s"' % (dist_name, pkg_name))
+            errors.append('distribution %s: missing package.xml file for package "%s"' % (dist_name, pkg_name))
             continue
         # check that package.xml is parseable
         try:
