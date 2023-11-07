@@ -42,7 +42,8 @@ from catkin_pkg.packages import find_package_paths
 from rosdistro.common import rmtree
 from rosdistro.source_repository_cache import SourceRepositoryCache
 from rosdistro.vcs import Git, ref_is_hash
-
+from dotenv import load_dotenv
+load_dotenv()
 
 def git_manifest_provider(_dist_name, repo, pkg_name):
     assert repo.version
@@ -87,9 +88,9 @@ def git_source_manifest_provider(repo):
 def _temp_git_clone(url, ref):
     base = tempfile.mkdtemp('rosdistro')
     git = Git(cwd=base)
-    if ('gitlab.halo.dekaresearch.com' in url):
+    if ('gitlab-prod.halo.halo-deka.com' in url):
         GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
-        url = url.replace("http://", "http://build-farmer:"+GITLAB_TOKEN+"@")
+        url = url.replace("https://", "https://build-farmer:"+GITLAB_TOKEN+"@")
     try:
         if git.version_gte('1.8.0') and not ref_is_hash(ref):
             # Directly clone the required ref with least amount of additional history.
