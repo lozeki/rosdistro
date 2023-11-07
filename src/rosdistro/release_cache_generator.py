@@ -87,7 +87,7 @@ def generate_release_cache(index, dist_name, preclean=False, debug=False):
         # check that package.xml is fetchable
         package_xml = dist.get_package_xml(pkg_name)
         if not package_xml:
-            errors.append('%s: missing package.xml file for package "%s"' % (dist_name, pkg_name))
+            errors.append('release %s: missing package.xml file for package "%s"' % (dist_name, pkg_name))
             continue
         # check that package.xml is parseable
         try:
