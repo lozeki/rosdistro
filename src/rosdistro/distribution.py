@@ -75,7 +75,8 @@ class Distribution(object):
                 return None
             package_xml = None
             for mp in self._manifest_providers:
-                logger.debug(f'Distribution: {self._distribution_file.name} repo.get_release_tag(pkg_name) {repo.get_release_tag(pkg_name)} pkg_name: {pkg_name}')
+                if pkg_name == "bota_driver":
+                    logger.debug(f'Distribution: {self._distribution_file.name} repo.get_release_tag(pkg_name) {repo.get_release_tag(pkg_name)} pkg_name: {pkg_name}')
                 package_xml = mp(self._distribution_file.name, repo, pkg_name)
                 if package_xml is not None:
                     break
