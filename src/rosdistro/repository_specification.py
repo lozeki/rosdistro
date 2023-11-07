@@ -34,7 +34,8 @@
 import re
 import os
 from .vcs import Git
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class RepositorySpecification(object):
     # Match groups are server and path on server.
@@ -70,7 +71,7 @@ class RepositorySpecification(object):
         if not self._remote_refs:
             if ('gitlab.halo.dekaresearch.com' in self.url):
                 GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
-                result = Git().command('ls-remote', '--tags', '--heads', self.url.replace("http://", "http://oauth2:"+GITLAB_TOKEN+"@"))
+                result = Git().command('ls-remote', '--tags', '--heads', self.url.replace("https://", "https://oauth2:"+GITLAB_TOKEN+"@"))
             else:
                 result = Git().command('ls-remote', self.url)
             if result['returncode'] != 0:
