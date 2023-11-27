@@ -69,7 +69,7 @@ class RepositorySpecification(object):
     @property
     def remote_refs(self):
         if not self._remote_refs:
-            if ('gitlab.halo.dekaresearch.com' in self.url):
+            if ('gitlab-prod.halo.halo-deka.com' in self.url):
                 GITLAB_TOKEN = os.getenv("GITLAB_TOKEN")
                 result = Git().command('ls-remote', '--tags', '--heads', self.url.replace("https://", "https://oauth2:"+GITLAB_TOKEN+"@"))
             else:
